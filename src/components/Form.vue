@@ -38,8 +38,6 @@ export default {
         const addElement = () =>{
             store.dispatch('addTask', inputTask)
             inputTask.value = ''
-            router.push('/')
-            swal('Task added', '', 'success')
         }
 
         return {inputTask, disabledBtn, addElement, inputChange}

@@ -1,7 +1,4 @@
 <template>
-    <p v-if="incorrectAuth">
-        Incorrect username
-    </p>
     <form @submit.prevent="login">
         <input
             class="form-control w-50 mx-auto mt-4"
@@ -14,6 +11,7 @@
             class="form-control w-50 mx-auto mt-4"
             type="password"
             placeholder="Password"
+            autocomplete="on"
             v-model="user_password"
         >
 
@@ -36,7 +34,6 @@ export default {
 
         const user_name = ref('')
         const user_password = ref('')
-        const incorrectAuth = false
 
         const login = () =>{
             store.dispatch('userLogin',{
@@ -45,12 +42,14 @@ export default {
             })
         }
 
-        return {user_name, user_password, incorrectAuth, login}
+        return {user_name, user_password, login}
     },
 
 }
 </script>
 
 <style>
+
+
 
 </style>

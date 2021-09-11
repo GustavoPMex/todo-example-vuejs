@@ -50,6 +50,41 @@ export default {
 
 <style>
 
+.swal-modal{
+    background-color: rgb(60, 62, 65);
+}
+
+.swal-title{
+    color: white;
+}
+
+.swal-text{
+  color: white;
+}
+
+.swal-button{
+  background-color: #198754;
+  border-color: #198754;
+  transition: .1s;
+
+}
+.swal-button:not([disabled]):hover {
+    background-color: #147749;
+}
+.swal-button:hover{
+  background-color: #157347;
+  border-color: #146c43;
+}
+
+.swal-button:active {
+    background-color: #157347;
+}
+
+.swal-button:focus {
+    outline: none;
+    box-shadow: 0 0 0 1px #fff, 0 0 0 3px #157347;
+}
+
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
