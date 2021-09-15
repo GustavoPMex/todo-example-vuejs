@@ -25,6 +25,7 @@ import swal from 'sweetalert'
 export default {
     setup() {
         const inputTask = ref('')
+        
         const store = useStore()
 
         const disabledBtn = computed(() => {
@@ -37,7 +38,6 @@ export default {
 
         const addElement = () =>{
             store.dispatch('addTask', inputTask)
-            inputTask.value = ''
         }
 
         return {inputTask, disabledBtn, addElement, inputChange}

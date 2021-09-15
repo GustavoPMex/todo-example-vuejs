@@ -1,6 +1,6 @@
 <template>
-    <h2>Tasks</h2>
     <div v-if="tasks.length > 0" class="content p-5">
+            <h2>Tasks</h2>
         <table class="table table-dark table-striped table-list disable-select">
             <thead>
                 <tr>
@@ -14,6 +14,53 @@
                 <tr v-for="(task,index) in tasks" :key="index">
                     <th scope="row">{{index + 1}}</th>
                     <td>{{task.description}}</td>
+                    <td>
+                        In progress
+                    </td>
+                    <td>
+                        <i 
+                            class="fas fa-pen-square icon-edit"
+                            role="button"
+                            title="Success"
+                            @click="setTarea(task)"
+                        ></i >
+                        <i 
+                            class="fas fa-calendar-check icon-success"
+                            role="button"
+                            title="Success"
+                            @click="complete(task)"
+                        ></i>
+                        <i 
+                            class="fas fa-calendar-times icon-delete"
+                            role="button"
+                            title="Delete Task"
+                            @click="deleteTask(task.id)"
+                        ></i>
+
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div v-else class="content p-5">
+        <p class="empty">Empty</p>
+    </div>
+
+    <div v-if="completedTasks.length > 0" class="content p-5">
+        <h2 class="mb-5">Completed Tasks</h2>
+        <table class="table table-dark table-striped table-list disable-select">
+            <thead>
+                <tr>
+                <th scope="col">#</th>
+                <th scope="col">Tasks</th>
+                <th scope="col">Status</th>
+                <th scope="col">Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr v-for="(task, index) in completedTasks" :key="index">
+                    <th scope="row">{{index + 1}}</th>
+                    <td>{{task.description}}</td>
                     <td
                         v-if="task.status"
                     >
@@ -24,24 +71,16 @@
                     </td>
                     <td>
                         <i 
-                            class="fas fa-calendar-check icon-success"
-                            role="button"
-                            title="Success"
-                        ></i>
-
-                        <i 
                             class="fas fa-calendar-times icon-delete"
                             role="button"
                             title="Delete Task"
+                            @click="deleteTask(task.id)"
                         ></i>
 
                     </td>
                 </tr>
             </tbody>
         </table>
-    </div>
-    <div v-else class="content p-5">
-        <p class="empty">Empty</p>
     </div>
 
 </template>
@@ -58,12 +97,29 @@ export default {
             return store.getters.getTasks
         })
 
-        onMounted(async()  =>{
-            await tasks
-            await store.dispatch('getTasks')
+        const completedTasks = computed(() =>{
+            return store.getters.getCompletedTasks
         })
 
-        return {tasks}
+        const complete = (task) =>{
+            store.dispatch('completeTask', task)
+        }
+
+        const deleteTask = (idtask) => {
+            store.dispatch('deleteTask', idtask)
+        }
+
+        const setTarea = (task) => {
+            store.dispatch('setUpdateTask', task)
+        }
+
+        onMounted(async()  =>{
+            await store.dispatch('getTasks')
+            await tasks
+            await completedTasks
+        })
+
+        return {tasks, completedTasks, complete, deleteTask, setTarea}
     }
 }
 </script>
@@ -73,15 +129,21 @@ export default {
     color: white !important;
 }
 
+.icon-edit{
+    color: rgb(115, 147, 255) !important;
+    margin: 0 13px 0 0;
+    font-size: 30px;
+}
+
 .icon-success{
     color: green !important;
-    margin: 0 10px 0 0;
+    margin: 0;
     font-size: 30px;
 }
 
 .icon-delete{
     color: red !important;
-    margin: 0 0 0 10px;
+    margin: 0 0 0 13px;
     font-size: 30px;
 }
 
