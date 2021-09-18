@@ -1,8 +1,10 @@
 import { createStore, Vuex } from 'vuex'
 import axios from 'axios'
 import router from '../router'
-import decodeToken from '../assets/decodeJwt'
 import swal from 'sweetalert'
+
+
+// The header is configurate in assets/jwtInterceptor.js. It is called in main.js
 
 export default createStore({
   state: {
@@ -17,6 +19,7 @@ export default createStore({
     setCompletedTasks(state, payload){
       state.completedTasks = payload
     },
+    
     setUserAuth(state, payload){
       state.userAuth = payload
     }
@@ -75,11 +78,7 @@ export default createStore({
       if (sessionToken){
         const djangoResponse = 'http://127.0.0.1:8000/api/v1/tasks/'
         // Get API
-        await axios.get(djangoResponse, {
-          headers: {
-            Authorization: `Bearer ${sessionToken.access}`
-          }
-        })
+        await axios.get(djangoResponse)
         .then((response) => {
           const tasks = response.data
           // Tasks in progress
@@ -118,20 +117,13 @@ export default createStore({
     async addTask({commit, state}, task){
       const sessionToken = JSON.parse(sessionStorage.getItem('user'))
       if (sessionToken) {
-        // Decode Token
-        const token = decodeToken(sessionToken.access)
         const objTask = {
           description: task.value,
-          owner: token.user_id,
           status: true
         }
         // Post
         const djangoResponse = 'http://127.0.0.1:8000/api/v1/tasks/'
-        await axios.post(djangoResponse, objTask, {
-          headers: {
-            Authorization: `Bearer ${sessionToken.access}`
-          }
-        })
+        await axios.post(djangoResponse, objTask)
         .then(() =>{
           router.push('/')
           swal({
@@ -161,14 +153,8 @@ export default createStore({
         // Change status field
         axios.put(djangoResponse,
           {
-            owner: task.owner,
             description: task.description,
             status: false
-          },
-          {
-            headers: {
-              Authorization: `Bearer ${sessionToken.access}`
-            }
           }
         )
         .then(() => {
@@ -197,11 +183,7 @@ export default createStore({
       if(sessionToken){
         const djangoResponse = `http://127.0.0.1:8000/api/v1/tasks/delete/${idtask}/`
 
-        axios.delete(djangoResponse, {
-            headers: {
-              Authorization: `Bearer ${sessionToken.access}`
-            }
-        })
+        axios.delete(djangoResponse)
         .then(() => {
           router.go()
         })
@@ -233,16 +215,12 @@ export default createStore({
       if(sessionToken){
         const djangoResponse = `http://127.0.0.1:8000/api/v1/tasks/edit/${task.id}/`
         // Update task
-        axios.put(djangoResponse,
-          task,
-          {
-            headers: {
-              Authorization: `Bearer ${sessionToken.access}`
-            }
-          }
-        )
+        axios.put(djangoResponse, task)
         .then(() => {
           router.push('/')
+          swal({
+            title: 'Updated task'
+          })
         })
         .catch((error) => {
           // This redirects to login when the token expired
