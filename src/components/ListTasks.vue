@@ -102,6 +102,7 @@ export default {
         })
 
         const complete = (task) =>{
+            task.status = false
             store.dispatch('completeTask', task)
         }
 

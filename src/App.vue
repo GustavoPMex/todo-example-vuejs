@@ -2,14 +2,33 @@
   <h1 class="mt-4">ToDO example</h1>
 
   <div id="nav">
-    <router-link class="mx-4" to="/">Home</router-link> 
-    <router-link class="mx-4" to="/add">Add</router-link>
+    <router-link 
+      class="mx-4" to="/"
+      v-if="userAuth"
+    >
+      Home
+    </router-link> 
+
+    <router-link
+      class="mx-4" to="/add"
+      v-if="userAuth"
+    >
+      Add
+    </router-link>
+
     <router-link 
       class="mx-4"
       to="/login"
       v-if="!userAuth"
     >
       Login
+    </router-link> 
+    <router-link 
+      class="mx-4"
+      to="/register"
+      v-if="!userAuth"
+    >
+      Register
     </router-link> 
     <BtnLogout />
   </div>

@@ -19,7 +19,17 @@ export default createStore({
     setCompletedTasks(state, payload){
       state.completedTasks = payload
     },
-    
+    setTaskDone(state, payload){
+      state.tasks = state.tasks.filter(item => item.id !== payload.id)
+      state.completedTasks.push(payload)
+    },
+    removeTask(state, idtask){
+      const taskInProgress = state.tasks.find(item => item.id === idtask)
+      if (taskInProgress) {
+        state.tasks = state.tasks.filter(item => item.id !== idtask)
+      }
+      state.completedTasks = state.completedTasks.filter(item => item.id !== idtask)
+    },
     setUserAuth(state, payload){
       state.userAuth = payload
     }
@@ -27,7 +37,7 @@ export default createStore({
   actions: {
     // USER LOGIN
     async userLogin({commit}, credentials){
-        const djangoResponse = 'http://127.0.0.1:8000/api/token/' 
+        const djangoResponse = 'http://127.0.0.1:8000/auth/token/' 
         await axios.post(djangoResponse, {
           username: credentials.username,
           password: credentials.password
@@ -53,14 +63,35 @@ export default createStore({
         })
     },
 
+    async userRegistration({commit}, credentials){
+      const djangoResponse = 'http://127.0.0.1:8000/auth/register/' 
+      await axios.post(djangoResponse, {
+        username: credentials.username,
+        password: credentials.password,
+        email: credentials.email,
+        first_name: credentials.first_name,
+        last_name: credentials.last_name,
+        password: credentials.password,
+        password2: credentials.password2,
+      })
+      .then(() =>{         
+        router.push({name: 'Login'})
+        swal({
+          title: 'SUCCESS',
+          text: 'Registered User'
+        })
+      })
+      
+  },
+
     // USER LOGOUT
     userLogout({commit}){
       sessionStorage.clear()
       localStorage.clear()
       commit('setUserAuth', false)
       // Router.go wihout arguments reloads the page
-      router.go()
       router.push({name: 'Login'})
+      router.go()
     },
 
     // LOAD SESSION STORAGE
@@ -82,18 +113,10 @@ export default createStore({
         .then((response) => {
           const tasks = response.data
           // Tasks in progress
-          const inProgress = tasks.filter((task) => {
-            if(task.status === true){
-              return task
-            }
-          })
+          const inProgress = tasks.filter(item => item.status === true)
           // Completed Tasks
-          const completed = tasks.filter((task) => {
-            if(task.status === false){
-              return task
-            }
-          })
-          // List
+          const completed = tasks.filter(item => item.status === false)
+          // Assign to list
           commit('setTasks', inProgress)
           commit('setCompletedTasks', completed)
         })
@@ -154,11 +177,15 @@ export default createStore({
         axios.put(djangoResponse,
           {
             description: task.description,
-            status: false
+            status: task.status
           }
         )
         .then(() => {
-          router.go()
+          commit('setTaskDone', task)
+          router.push({name: 'Home'})
+          swal({
+            title: 'Task done!'
+          })
         })
         .catch((error) => {
           // This redirects to login when the token expired
@@ -185,7 +212,16 @@ export default createStore({
 
         axios.delete(djangoResponse)
         .then(() => {
-          router.go()
+          commit('removeTask', idtask)
+          router.push({name: 'Home'})
+          swal(
+            {
+              icon: 'error',
+              title: 'Deleted',
+              text: 'Task deleted'
+            }
+          )
+          
         })
         .catch((error) => {
           // This redirects to login when the token expired

@@ -5,7 +5,7 @@
             id="task"
             class="form-control w-50 mx-auto mt-4"
             placeholder="Description"
-            v-model="taskDescription.description"
+            v-model.trim="taskDescription.description"
         type="text">
         <button
             class="btn btn-success mt-4"

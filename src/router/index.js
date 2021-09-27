@@ -19,13 +19,17 @@ const routes = [
     path: '/login',
     name: 'Login',
     component: () => import(/* webpackChunkName: "login" */ '../views/Login.vue')
-  }
-  ,
+  },
   {
     path: '/update/',
     name: 'Update',
     component: () => import(/* webpackChunkName: "Update" */ '../views/Update.vue'),
     meta: {requiresAuth: true}
+  },
+  {
+    path: '/register',
+    name: 'Register',
+    component: () => import(/* webpackChunkName: "register" */ '../views/Register.vue'),
   }
 ]
 

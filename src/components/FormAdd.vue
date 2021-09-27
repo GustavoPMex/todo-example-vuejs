@@ -4,7 +4,7 @@
             id="task"
             class="form-control w-50 mx-auto mt-4"
             placeholder="Description"
-            v-model="inputTask"
+            v-model.trim="inputTask"
             @keyup="inputChange"
         type="text">
 
