@@ -23,7 +23,7 @@
 
 ## About the project
 ```
-This project is a practice for using APIs provided by a Django project
+This project is a practice for using APIs provided by a Django project (https://github.com/GustavoPMex/todo-example-django)
 ```
 
 ### Project setup
